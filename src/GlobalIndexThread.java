@@ -1,22 +1,22 @@
 /*
-    Project 5 (Multithreading in Java)
+    Project 6 (Advanced Multithreading in Java)
     Tyler Peters
-    2017-12-1
+    2017-12-4
     DS 730
 
     Each text files found at the input location is processed by
-    this class (which is called from IndexThreads.java).
+    this class (which is called from GlobalIndex.java).
  */
 
 import java.io.*;
 import java.util.*;
 
-public class IndexThread extends Thread {
+public class GlobalIndexThread extends Thread {
 
     private File file;
     private int numChars;
 
-    public IndexThread(File file, int numChars) {
+    public GlobalIndexThread(File file, int numChars) {
         this.file = file;
         this.numChars = numChars;
     }
@@ -28,8 +28,8 @@ public class IndexThread extends Thread {
 
             int charCount = 0;
             int page = 1;
-            index.clear();
             Scanner reader = new Scanner(new BufferedReader(new FileReader(file)));
+
             // Loop through the content within the file:
             while (reader.hasNext()) {
                 String str = reader.next();
@@ -42,34 +42,11 @@ public class IndexThread extends Thread {
                     updateIndex(index, str, page);
                 }
             }
-            // For each entry in the TreeMap (index), build a string in the specified format:
-            StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, TreeSet<Integer>> entry : index.entrySet()) {
-                StringBuilder pages = new StringBuilder();
-                sb.append(entry.getKey());
-                if (entry.getValue() != null) {
-                    for (Integer value : entry.getValue()) {
-                        pages.append(", ").append(value.toString());
-                    }
-                    sb.append(pages.substring(1, pages.length()));
-                }
-                sb.append("\n");
-            }
-            // Build the output filename:
-            String fileName = file.getParent() + "/output/" + file.getName().replace(".txt", "") + "_output.txt";
-            // Select the path to the output directory
-            File output = new File(new File(fileName).getParent());
-            // If the output directory does not exist, make it:
-            if (!output.exists() || !output.isDirectory()) {
-                output.mkdirs();
-            }
 
-            // Open a buffered file writer at the output location:
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-            // Write the index to the file:
-            writer.write(sb.toString());
-            // Close the writer:
-            writer.close();
+            // After reading the file, and populating the data structure, pass the file name and the index data
+            // to the calling class.
+            GlobalIndex.addIndex(file, index);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -86,5 +63,4 @@ public class IndexThread extends Thread {
             index.put(str.toLowerCase(), set);
         }
     }
-
 }

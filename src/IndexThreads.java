@@ -1,5 +1,5 @@
 /*
-    Project 5 (Mulithreading in Java)
+    Project 5 (Multithreading in Java)
     Tyler Peters
     2017-12-1
     DS 730
